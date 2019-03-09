@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "momentjs": "^2.0.0",
     "nodemon": "^1.18.10",
     "redis": "^2.8.0",
     "request": "^2.88.0"

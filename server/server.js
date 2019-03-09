@@ -42,13 +42,13 @@ app.get('/metar/info', (req,res) => {
     //scode -> stores the station query sent by the user
     scode = req.query.scode;
     if(scode){
-        check = 0;
         client.get(scode.toUpperCase(),(err,result) => {
             if(err) {
                 console.log('error while getting from redis'+ err);
             } else if (result){
-                res.send(result);
-                check = 1;
+                let part = result.split(" ")
+                console.log(part);
+                res.send(`{"data":{"nocache":"0","station"="${scode}","last_observation":"${part[0]} at ${part[1]}","temerature":"${part[7]}","wind":"${part[4]}"}}`);
             } else {
                 newurl = url + scode.toUpperCase() + '.TXT';
                 request.get(newurl, (error,response,body) => {
@@ -57,7 +57,8 @@ app.get('/metar/info', (req,res) => {
                         res.send(error);
                     } else if(body) {
                         client.set(scode.toUpperCase(),body,'EX',300);
-                        res.send(body);
+                        part = body.split(" ")
+                        res.send(`{"data":{"nocache":"1","station"="${scode}","last_observation":"${part[0]} at ${part[1]}","temerature":"${part[7]}","wind":"${part[4]}"}}`);
                     }
                     
                 })
@@ -68,5 +69,7 @@ app.get('/metar/info', (req,res) => {
         res.send('{"data":"No Scode In Query"}');
     }
 });
+
+
 
 
